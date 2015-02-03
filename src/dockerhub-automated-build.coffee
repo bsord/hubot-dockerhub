@@ -55,9 +55,16 @@ module.exports = (robot) ->
     for room in rooms
       robot.messageRoom room, "Docker Hub Automated Build: #{repo} の push に成功しました\n#{data.repository.repo_url}"
 
-    ## TODO: support webhook chain (see https://docs.docker.com/docker-hub/repos/#webhook-chains)
-    res.end ""
+    ## see https://docs.docker.com/docker-hub/repos/#webhook-chains
+    cb_url = data.callback_url
+    robot.logger.info cb_url
+    robot.http(cb_url)
+      .post("{\"state\": \"success\"}") (cb_err, cb_res, cb_body) ->
+        robot.logger.debug cb_err
+        #robot.logger.debug cb_res
+        robot.logger.debug cb_body
 
+    res.end ""
 
 repo2rooms = (robot, repo) ->
   m = (robot.brain.get("dockerhub-automated-build-repository-to-rooms") || {})
