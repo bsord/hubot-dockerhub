@@ -1,22 +1,64 @@
 # Description
 #   Receive Docker Hub Automated Build Web Hook
 #
+# Devendencies:
+#
 # Configuration:
-#   LIST_OF_ENV_VARS_TO_SET
+#
+#   1. Docker Hub の Web Hook を設定
+#       http://<HUBOT_URL>:<PORT>/hubot/dockerhub/automated-build
 #
 # Commands:
-#   hubot hello - <what the respond trigger does>
-#   orly - <what the hear trigger does>
+#   hubot dockerhub automated-build <repo> to <room> -- Docker Hub の <repo> の Automated Build の通知を <room> に設定
+#   hubot dockerhub automated-build show -- Docker Hub の Automated Build の通知先 room を表示
 #
-# Notes:
-#   <optional notes required for the script>
+# URLS:
+#   POST /hubot/dockerhub/automated-build
 #
 # Author:
 #   YAMADA Tsuyoshi <tyamada@minimum2scp.org>
 
-module.exports = (robot) ->
-  robot.respond /hello/, (msg) ->
-    msg.reply "hello!"
+#url = require('url')
+#querystring = require('querystring')
 
-  robot.hear /orly/, ->
-    msg.send "yarly"
+module.exports = (robot) ->
+  robot.respond /dockerhub\s+automated-build\s+(\S+)\s+to\s+(\S+)\s*$/, (msg) ->
+    unique = (array) ->
+      output = {}
+      output[array[key]] = array[key] for key in [0...array.length]
+      value for key, value of output
+    repo = msg.match[1]
+    room = msg.match[2]
+    m = (robot.brain.get("dockerhub-automated-build-repository-to-rooms") || {})
+    r = (m[repo] || [])
+    r.push(room)
+    m[repo] = unique r
+    robot.brain.set("dockerhub-automated-build-repository-to-rooms", m)
+    msg.reply "#{repo} の通知を #{room} に送信します"
+
+  robot.respond /dockerhub\s+automated-build\s+show\s*$/, (msg) ->
+    msg.send "Docker Hub の Automated Build の通知設定一覧"
+    repos = (robot.brain.get("dockerhub-automated-build-repository-to-rooms") || {})
+    for repo, rooms of repos
+      rooms ||= []
+      msg.send "#{repo} -> #{rooms.join(", ")}"
+
+  robot.router.post "/hubot/dockerhub/automated-build", (req, res) ->
+    data = req.body
+
+    ## about JSON payload, see http://docs.docker.com/docker-hub/builds/#webhooks
+    robot.logger.info data
+
+    repo = data.repository.repo_name
+
+    rooms = repo2rooms(robot, repo)
+    for room in rooms
+      robot.messageRoom room, "Docker Hub Automated Build: #{repo} の push に成功しました\n#{data.repository.repo_url}"
+
+    ## TODO: support webhook chain (see https://docs.docker.com/docker-hub/repos/#webhook-chains)
+    res.end ""
+
+
+repo2rooms = (robot, repo) ->
+  m = (robot.brain.get("dockerhub-automated-build-repository-to-rooms") || {})
+  return (m[repo] || [])
