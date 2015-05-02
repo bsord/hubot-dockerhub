@@ -1,20 +1,20 @@
-# hubot-dockerhub-automated-build
+# hubot-dockerhub
 
-Receive Docker Hub Automated Build Web Hook
+Receive DockerHub Web Hook
 
-See [`src/dockerhub-automated-build.coffee`](src/dockerhub-automated-build.coffee) for full documentation.
+See [`src/dockerhub.coffee`](src/dockerhub.coffee) for full documentation.
 
 ## Installation
 
 In hubot project repo, run:
 
-`npm install hubot-dockerhub-automated-build --save`
+`npm install hubot-dockerhub --save`
 
-Then add **hubot-dockerhub-automated-build** to your `external-scripts.json`:
+Then add **hubot-dockerhub** to your `external-scripts.json`:
 
 ```json
 [
-  "hubot-dockerhub-automated-build"
+  "hubot-dockerhub"
 ]
 ```
 

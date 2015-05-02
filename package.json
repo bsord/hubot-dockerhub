@@ -1,6 +1,6 @@
 {
-  "name": "hubot-dockerhub-automated-build",
-  "description": "Receive Docker Hub Automated Build Web Hook",
+  "name": "hubot-dockerhub",
+  "description": "Receive DockerHub Web Hook",
   "version": "0.0.0",
   "author": "YAMADA Tsuyoshi <tyamada@minimum2scp.org>",
   "license": "MIT",
@@ -9,11 +9,11 @@
 
   "repository": {
     "type": "git",
-    "url": "git://github.com/hubot-scripts/hubot-dockerhub-automated-build.git"
+    "url": "git://github.com/hubot-scripts/hubot-dockerhub.git"
   },
 
   "bugs": {
-    "url": "https://github.com/hubot-scripts/hubot-dockerhub-automated-build/issues"
+    "url": "https://github.com/hubot-scripts/hubot-dockerhub/issues"
   },
 
   "dependencies": {
