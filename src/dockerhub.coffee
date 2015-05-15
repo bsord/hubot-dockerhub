@@ -84,7 +84,7 @@ module.exports = (robot) ->
     robot.logger.debug("hubot-docker build-trigger del")
     repo = res.match[1]
     robot.logger.debug("repo: #{repo}")
-    triger_tokens = (robot.brain.get("dockerhub-trigger-tokens-repository-to-rooms") || {})
+    triger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
     if triger_tokens[repo]
       delete triger_tokens[repo]
       robot.brain.set("dockerhub-trigger-tokens", triger_tokens)
