@@ -1,6 +1,6 @@
 # hubot-dockerhub
 
-Receive DockerHub Web Hook
+Receive DockerHub Web Hook / Invoke build trigger
 
 See [`src/dockerhub.coffee`](src/dockerhub.coffee) for full documentation.
 
