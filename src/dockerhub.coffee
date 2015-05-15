@@ -105,7 +105,7 @@ module.exports = (robot) ->
     triger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
     if token = triger_tokens[repo]
       res.send "#{repo} の build trigger を発火します"
-      robot.http("https://registry.hub.docker.com/u/#{repo}/trigger/#{token}").post({"build":"true"}) (post_err, post_res, post_body) ->
+      robot.http("https://registry.hub.docker.com/u/#{repo}/trigger/#{token}/").post({"build=true"}) (post_err, post_res, post_body) ->
         robot.logger.debug(post_err)
         robot.logger.debug(post_res)
         robot.logger.debug(post_body)
