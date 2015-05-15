@@ -72,8 +72,8 @@ module.exports = (robot) ->
 
   robot.respond /dockerhub\s+trigger\s+set\s+(\S+)\s+with\s+(\S+)\s*$/, (res) ->
     robot.logger.debug("hubot-docker build-trigger set")
-    repo = res.match(1)
-    token = res.match(2)
+    repo = res.match[1]
+    token = res.match[2]
     robot.logger.debug("repo: #{repo}, token: #{token}")
     triger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
     triger_tokens[repo] = token
@@ -82,7 +82,7 @@ module.exports = (robot) ->
 
   robot.respond /dockerhub\s+trigger\s+del\s+(\S+)\s*$/, (res) ->
     robot.logger.debug("hubot-docker build-trigger del")
-    repo = res.match(1)
+    repo = res.match[1]
     robot.logger.debug("repo: #{repo}")
     triger_tokens = (robot.brain.get("dockerhub-trigger-tokens-repository-to-rooms") || {})
     if triger_tokens[repo]
@@ -100,7 +100,7 @@ module.exports = (robot) ->
 
   robot.respond /dockerhub\s+trigger\s+invoke\s+(\S+)\s*$/, (res) ->
     robot.logger.debug("hubot-docker build-trigger invoke")
-    repo = res.match(1)
+    repo = res.match[1]
     robot.logger.debug("repo: #{repo}")
     triger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
     if token = triger_tokens[repo]
