@@ -70,6 +70,42 @@ module.exports = (robot) ->
 
     res.end ""
 
+  robot.respond /dockerhub\s+trigger\s+set\s*(\S+)\s+with\s+(\S+)$/, (res) ->
+    repo = res.match(1)
+    token = res.match(2)
+    triger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
+    triger_tokens[repo] = token
+    robot.brain.set("dockerhub-trigger-tokens", triger_tokens)
+    res.send "#{repo} のトークンを設定しました"
+
+  robot.respond /dockerhub\s+trigger\s+del\s*(\S+)$/, (res) ->
+    repo = res.match(1)
+    triger_tokens = (robot.brain.get("dockerhub-trigger-tokens-repository-to-rooms") || {})
+    if triger_tokens[repo]
+      delete triger_tokens[repo]
+      robot.brain.set("dockerhub-trigger-tokens", triger_tokens)
+      res.send "#{repo} のトークンを削除しました"
+    else
+      res.send "#{repo} のトークンは設定されていません"
+
+  robot.respond /dockerhub\s+trigger\s+show$/, (res) ->
+    triger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
+    for repo, token of triger_tokens
+      res.send "#{repo} の build trigger のトークンは #{token} です"
+
+  robot.respond /dockerhub\s+trigger\s+invoke\s+(\S+)$/, (res) ->
+    repo = res.match(1)
+    triger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
+    if token = triger_tokens[repo]
+      res.send "#{repo} の build trigger を発火します"
+      robot.http("https://registry.hub.docker.com/u/#{repo}/trigger/#{token}").post({"build":"true"}) (err, res, body) ->
+        if err
+          res.send "エラーが発生しました: #{err}"
+        else
+          res.send "#{body}"
+    else
+      res.send "#{repo} のトークンが設定されていません"
+
 repo2rooms = (robot, repo) ->
   m = (robot.brain.get("dockerhub-notification-repository-to-rooms") || {})
   return (m[repo] || [])
