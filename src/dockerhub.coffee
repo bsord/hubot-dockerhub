@@ -75,28 +75,28 @@ module.exports = (robot) ->
     repo = res.match[1]
     token = res.match[2]
     robot.logger.debug("repo: #{repo}, token: #{token}")
-    triger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
-    triger_tokens[repo] = token
-    robot.brain.set("dockerhub-trigger-tokens", triger_tokens)
+    trigger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
+    trigger_tokens[repo] = token
+    robot.brain.set("dockerhub-trigger-tokens", trigger_tokens)
     res.send "#{repo} のトークンを設定しました"
 
   robot.respond /dockerhub\s+trigger\s+del\s+(\S+)\s*$/, (res) ->
     robot.logger.debug("hubot-docker build-trigger del")
     repo = res.match[1]
     robot.logger.debug("repo: #{repo}")
-    triger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
-    if triger_tokens[repo]
-      delete triger_tokens[repo]
-      robot.brain.set("dockerhub-trigger-tokens", triger_tokens)
+    trigger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
+    if trigger_tokens[repo]
+      delete trigger_tokens[repo]
+      robot.brain.set("dockerhub-trigger-tokens", trigger_tokens)
       res.send "#{repo} のトークンを削除しました"
     else
       res.send "#{repo} のトークンは設定されていません"
 
   robot.respond /dockerhub\s+trigger\s+show\s*$/, (res) ->
     robot.logger.debug("hubot-docker build-trigger show")
-    triger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
+    trigger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
     msg = ""
-    for repo, token of triger_tokens
+    for repo, token of trigger_tokens
       msg += "#{repo} の build trigger のトークンは #{token} です\n"
     res.send msg
 
@@ -104,8 +104,8 @@ module.exports = (robot) ->
     robot.logger.debug("hubot-docker build-trigger invoke")
     repo = res.match[1]
     robot.logger.debug("repo: #{repo}")
-    triger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
-    if token = triger_tokens[repo]
+    trigger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
+    if token = trigger_tokens[repo]
       res.send "#{repo} の build trigger を発火します"
       data = JSON.stringify({"build":true})
       robot.http("https://registry.hub.docker.com/u/#{repo}/trigger/#{token}/")
