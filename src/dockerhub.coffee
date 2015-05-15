@@ -112,6 +112,8 @@ module.exports = (robot) ->
         if post_err
           res.send "エラーが発生しました: #{post_err}"
         else
+          for k,v of post_res.headres
+            res.send "#{k}: #{v}"
           res.send "#{post_body}"
     else
       res.send "#{repo} のトークンが設定されていません"
