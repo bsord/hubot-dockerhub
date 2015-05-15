@@ -120,7 +120,7 @@ module.exports = (robot) ->
             msg = "#{post_res.statusCode}\n"
             for k,v of post_res.headers
               msg += "#{k}: #{v}\n"
-            msg += "#{post_body}\n"
+            msg += "\n#{post_body}\n"
             res.send msg
     else
       res.send "#{repo} のトークンが設定されていません"
