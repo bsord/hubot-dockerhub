@@ -11,6 +11,10 @@
 # Commands:
 #   hubot dockerhub notify <repo> to <room> -- DockerHub の <repo> の Web Hook の通知を <room> に設定
 #   hubot dockerhub notify show -- DockerHub の Web Hook の通知先 room を表示
+#   hubot dockerhub trigger set <repo> with <token> -- DockerHub の <repo> の build trigger のトークン <token> を設定
+#   hubot dockerhub trigger del <repo> -- <repo> の build trigger の設定を削除
+#   hubot dockerhub trigger show -- DockerHub の build trigger の設定を表示
+#   hubot dockerhub trigger invoke <repo> -- DockerHub の <repo> の build trigger を発火
 #
 # URLS:
 #   POST /hubot/dockerhub/notify
