@@ -95,8 +95,10 @@ module.exports = (robot) ->
   robot.respond /dockerhub\s+trigger\s+show\s*$/, (res) ->
     robot.logger.debug("hubot-docker build-trigger show")
     triger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
+    msg = ""
     for repo, token of triger_tokens
-      res.send "#{repo} の build trigger のトークンは #{token} です"
+      msg += "#{repo} の build trigger のトークンは #{token} です\n"
+    res.send msg
 
   robot.respond /dockerhub\s+trigger\s+invoke\s+(\S+)\s*$/, (res) ->
     robot.logger.debug("hubot-docker build-trigger invoke")
@@ -115,10 +117,11 @@ module.exports = (robot) ->
           if post_err
             res.send "エラーが発生しました: #{post_err}"
           else
-            res.send post_res.statusCode
+            msg = "#{post_res.statusCode}\n"
             for k,v of post_res.headers
-              res.send "#{k}: #{v}"
-            res.send "#{post_body}"
+              msg += "#{k}: #{v}\n"
+            msg += "#{post_body}\n"
+            res.send msg
     else
       res.send "#{repo} のトークンが設定されていません"
 
