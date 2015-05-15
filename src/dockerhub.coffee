@@ -105,17 +105,20 @@ module.exports = (robot) ->
     triger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
     if token = triger_tokens[repo]
       res.send "#{repo} の build trigger を発火します"
-      robot.http("https://registry.hub.docker.com/u/#{repo}/trigger/#{token}/").post({"build=true"}) (post_err, post_res, post_body) ->
-        robot.logger.debug(post_err)
-        robot.logger.debug(post_res)
-        robot.logger.debug(post_body)
-        if post_err
-          res.send "エラーが発生しました: #{post_err}"
-        else
-          res.send "#{post_res.statusCode} #{post_res.statusMessage}"
-          for k,v of post_res.headers
-            res.send "#{k}: #{v}"
-          res.send "#{post_body}"
+      data = JSON.stringify({"build":true})
+      robot.http("https://registry.hub.docker.com/u/#{repo}/trigger/#{token}/")
+        .header('Content-Type', 'application/json')
+        .post(data) (post_err, post_res, post_body) ->
+          robot.logger.debug(post_err)
+          robot.logger.debug(post_res)
+          robot.logger.debug(post_body)
+          if post_err
+            res.send "エラーが発生しました: #{post_err}"
+          else
+            res.send "#{post_res.statusCode} #{post_res.statusMessage}"
+            for k,v of post_res.headers
+              res.send "#{k}: #{v}"
+            res.send "#{post_body}"
     else
       res.send "#{repo} のトークンが設定されていません"
 
