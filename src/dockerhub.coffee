@@ -115,7 +115,7 @@ module.exports = (robot) ->
           if post_err
             res.send "エラーが発生しました: #{post_err}"
           else
-            res.send "#{post_res.statusCode} #{post_res.statusMessage}"
+            res.send post_res.statusCode
             for k,v of post_res.headers
               res.send "#{k}: #{v}"
             res.send "#{post_body}"
