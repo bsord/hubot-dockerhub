@@ -95,9 +95,10 @@ module.exports = (robot) ->
   robot.respond /dockerhub\s+trigger\s+show\s*$/, (res) ->
     robot.logger.debug("hubot-docker build-trigger show")
     trigger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
-    msg = ""
+    num_tokens = Object.keys(trigger_tokens).length
+    msg = "#{num_tokens} 件のトークンが設定されています\n"
     for repo, token of trigger_tokens
-      msg += "#{repo} の build trigger のトークンは #{token} です\n"
+      msg += "#{repo} : #{token}\n"
     res.send msg
 
   robot.respond /dockerhub\s+trigger\s+invoke\s+(\S+)\s*$/, (res) ->
