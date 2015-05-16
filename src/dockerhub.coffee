@@ -71,19 +71,15 @@ module.exports = (robot) ->
     res.end ""
 
   robot.respond /dockerhub\s+trigger\s+set\s+(\S+)\s+with\s+(\S+)\s*$/, (res) ->
-    robot.logger.debug("hubot-docker build-trigger set")
     repo = res.match[1]
     token = res.match[2]
-    robot.logger.debug("repo: #{repo}, token: #{token}")
     trigger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
     trigger_tokens[repo] = token
     robot.brain.set("dockerhub-trigger-tokens", trigger_tokens)
     res.send "#{repo} のトークンを設定しました"
 
   robot.respond /dockerhub\s+trigger\s+del\s+(\S+)\s*$/, (res) ->
-    robot.logger.debug("hubot-docker build-trigger del")
     repo = res.match[1]
-    robot.logger.debug("repo: #{repo}")
     trigger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
     if trigger_tokens[repo]
       delete trigger_tokens[repo]
@@ -93,7 +89,6 @@ module.exports = (robot) ->
       res.send "#{repo} のトークンは設定されていません"
 
   robot.respond /dockerhub\s+trigger\s+show\s*$/, (res) ->
-    robot.logger.debug("hubot-docker build-trigger show")
     trigger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
     num_tokens = Object.keys(trigger_tokens).length
     msg = "#{num_tokens} 件のトークンが設定されています\n"
@@ -102,9 +97,7 @@ module.exports = (robot) ->
     res.send msg
 
   robot.respond /dockerhub\s+trigger\s+invoke\s+(\S+)\s*$/, (res) ->
-    robot.logger.debug("hubot-docker build-trigger invoke")
     repo = res.match[1]
-    robot.logger.debug("repo: #{repo}")
     trigger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
     if token = trigger_tokens[repo]
       res.send "#{repo} の build trigger を発火します"
