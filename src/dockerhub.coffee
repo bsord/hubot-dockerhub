@@ -58,9 +58,9 @@ module.exports = (robot) ->
       robot.messageRoom room, attachments:[
         color:       "good",
         title:       "DockerHub",
-        title_link:  data.repository.repo_url,
-        text:        "#{repo}:#{tag} was pushed",
-        fallback:    "DockerHub: #{repo}:#{tag} was pushed"
+        title_link:  "https://hub.docker.com/",
+        text:        "<#{data.repository.repo_url}|#{repo}:#{tag}> was pushed",
+        fallback:    "DockerHub: #{repo}:#{tag} was pushed\n#{data.repository.repo_url}"
       ]
 
     ## see https://docs.docker.com/docker-hub/repos/#webhook-chains
