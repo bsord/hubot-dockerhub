@@ -38,14 +38,11 @@ module.exports = (robot) ->
     r.push(room)
     m[repo] = unique r
     robot.brain.set("dockerhub-notification-repository-to-rooms", m)
-    msg.reply "#{repo} の通知を #{room} に送信します"
+    msg.send "Send notification for #{repo} to room #{room}"
 
   robot.respond /dockerhub\s+notify\s+show\s*$/, (msg) ->
-    msg.send "DockerHub の 通知設定一覧"
     repos = (robot.brain.get("dockerhub-notification-repository-to-rooms") || {})
-    for repo, rooms of repos
-      rooms ||= []
-      msg.send "#{repo} -> #{rooms.join(", ")}"
+    msg.send "DockerHub notification list\n" + (repo + "-> " + (rooms||[]).join(", ") for repo, rooms of repos).join("\n")
 
   robot.router.post "/hubot/dockerhub/notify", (req, res) ->
     data = req.body
@@ -54,10 +51,13 @@ module.exports = (robot) ->
     robot.logger.info data
 
     repo = data.repository.repo_name
+    tag = data.push_data.tag
 
     rooms = repo2rooms(robot, repo)
     for room in rooms
-      robot.messageRoom room, "DockerHub: #{repo} の push に成功しました\n#{data.repository.repo_url}"
+      robot.messageRoom room, attachments:[
+        {color: "good", title: "DockerHub", title_link: data.repository.repo_url, text: "#{repo}:#{tag} was pushed" }
+      ]
 
     ## see https://docs.docker.com/docker-hub/repos/#webhook-chains
     cb_url = data.callback_url
@@ -76,7 +76,7 @@ module.exports = (robot) ->
     trigger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
     trigger_tokens[repo] = token
     robot.brain.set("dockerhub-trigger-tokens", trigger_tokens)
-    res.send "#{repo} のトークンを設定しました"
+    res.send "Set token for #{repo}"
 
   robot.respond /dockerhub\s+trigger\s+del\s+(\S+)\s*$/, (res) ->
     repo = res.match[1]
@@ -84,23 +84,21 @@ module.exports = (robot) ->
     if trigger_tokens[repo]
       delete trigger_tokens[repo]
       robot.brain.set("dockerhub-trigger-tokens", trigger_tokens)
-      res.send "#{repo} のトークンを削除しました"
+      res.send "Removed token for #{repo}"
     else
-      res.send "#{repo} のトークンは設定されていません"
+      res.send "No token for #{repo}"
 
   robot.respond /dockerhub\s+trigger\s+show\s*$/, (res) ->
     trigger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
     num_tokens = Object.keys(trigger_tokens).length
-    msg = "#{num_tokens} 件のトークンが設定されています\n"
-    for repo, token of trigger_tokens
-      msg += "#{repo} : #{token}\n"
-    res.send msg
+    messages = []
+    res.send "#{num_tokens} tokens exist.\n" + ("#{repo} : #{token}" for repo, token of trigger_tokens).join("\n")
 
   robot.respond /dockerhub\s+trigger\s+invoke\s+(\S+)\s*$/, (res) ->
     repo = res.match[1]
     trigger_tokens = (robot.brain.get("dockerhub-trigger-tokens") || {})
     if token = trigger_tokens[repo]
-      res.send "#{repo} の build trigger を発火します"
+      res.send "Triggered #{repo}"
       data = JSON.stringify({"build":true})
       robot.http("https://registry.hub.docker.com/u/#{repo}/trigger/#{token}/")
         .header('Content-Type', 'application/json')
@@ -109,7 +107,7 @@ module.exports = (robot) ->
           robot.logger.debug(post_res)
           robot.logger.debug(post_body)
           if post_err
-            res.send "エラーが発生しました: #{post_err}"
+            res.send "Error: #{post_err}"
           else
             msg = "#{post_res.statusCode}\n"
             for k,v of post_res.headers
@@ -117,7 +115,7 @@ module.exports = (robot) ->
             msg += "\n#{post_body}\n"
             res.send msg
     else
-      res.send "#{repo} のトークンが設定されていません"
+      res.send "No token for #{repo}"
 
 repo2rooms = (robot, repo) ->
   m = (robot.brain.get("dockerhub-notification-repository-to-rooms") || {})

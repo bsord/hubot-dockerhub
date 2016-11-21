@@ -17,6 +17,7 @@
   },
 
   "dependencies": {
+    "hubot-slack": "^4.2.2"
   },
 
   "peerDependencies": {
