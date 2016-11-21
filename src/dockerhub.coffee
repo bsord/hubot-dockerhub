@@ -5,16 +5,16 @@
 #
 # Configuration:
 #
-#   1. DockerHub の Web Hook を設定
+#   1. Set dockerhub webhook
 #       http://<HUBOT_URL>:<PORT>/hubot/dockerhub/notify
 #
 # Commands:
-#   hubot dockerhub notify <repo> to <room> -- DockerHub の <repo> の Web Hook の通知を <room> に設定
-#   hubot dockerhub notify show -- DockerHub の Web Hook の通知先 room を表示
-#   hubot dockerhub trigger set <repo> with <token> -- DockerHub の <repo> の build trigger のトークン <token> を設定
-#   hubot dockerhub trigger del <repo> -- <repo> の build trigger の設定を削除
-#   hubot dockerhub trigger show -- DockerHub の build trigger の設定を表示
-#   hubot dockerhub trigger invoke <repo> -- DockerHub の <repo> の build trigger を発火
+#   hubot dockerhub notify <repo> to <room> -- Set webhook notification for DockerHub <repo> to <room>
+#   hubot dockerhub notify show -- Show webhook notification
+#   hubot dockerhub trigger set <repo> with <token> -- Set dockerhub build trigger token <token> for <repo>
+#   hubot dockerhub trigger del <repo> -- Remove dockerhub build trigger token for <repo>
+#   hubot dockerhub trigger show -- Show dockerhub build triggers
+#   hubot dockerhub trigger invoke <repo> -- Trigger dockerhub build for <repo>
 #
 # URLS:
 #   POST /hubot/dockerhub/notify
