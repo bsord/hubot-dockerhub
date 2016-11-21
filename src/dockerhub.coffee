@@ -56,7 +56,11 @@ module.exports = (robot) ->
     rooms = repo2rooms(robot, repo)
     for room in rooms
       robot.messageRoom room, attachments:[
-        {color: "good", title: "DockerHub", title_link: data.repository.repo_url, text: "#{repo}:#{tag} was pushed" }
+        color:       "good",
+        title:       "DockerHub",
+        title_link:  data.repository.repo_url,
+        text:        "#{repo}:#{tag} was pushed",
+        fallback:    "DockerHub: #{repo}:#{tag} was pushed"
       ]
 
     ## see https://docs.docker.com/docker-hub/repos/#webhook-chains
